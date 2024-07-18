@@ -1,120 +1,17 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
+{% block title %}Generate Image{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{% static 'favicon.png' %}" rel="icon" type="image/png">
-    <title>Generate Image</title>
-    <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
-<body>
-
-    <header>
-        <div class="header_inner">
-            <div class="left-side">
-                <div id="logo" class="uk-hidden@s">
-                    <a href="home.html">
-                        <b><h1 style="text-transform: uppercase;">Social Book</h1></b>
-                    </a>
-                </div>
-                <form action="/search" method="POST">
-                    {% csrf_token %}
-                    <input type="text" name="username" placeholder="Search for username..">&nbsp; &nbsp;
-                    <button type="submit"><i class="fa fa-search fa-1x"></i></button>
-                </form>
-            </div>
-            <div class="right-side lg:pr-4">
-                <a href="/generate_form" class="bg-pink-500 flex font-bold hidden hover:bg-pink-600 hover:text-white inline-block items-center lg:block max-h-10 mr-4 px-4 py-2 rounded shadow text-white">
-                    <ion-icon name="add-circle" class="-mb-1 mr-1 opacity-90 text-xl uilus-circle"></ion-icon> Generate Image
-                </a>
-                <a href="#">
-                    <img src="{{user_profile.profileimg.url}}" class="header-avatar" alt="">
-                </a>
-                <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
-                    <ul>
-                        <li><a href="/settings">Account setting</a></li>
-                        <li><a href="/logout">Log Out</a></li>
-                    </ul>
-                </div>
-            </div>
+{% block content %}
+<div class="container mt-5">
+    <h2>Generate Image</h2>
+    <form action="{% url 'generate_image' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="prompt">Prompt</label>
+            <input type="text" class="form-control" id="prompt" name="prompt" placeholder="Enter image prompt">
         </div>
-    </header>
-
-    <div class="container m-auto">
-        <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
-            <div class="space-y-5 flex-shrink-0 lg:w-7/12">
-
-                <div class="bg-white shadow rounded-md -mx-2 lg:mx-0">
-                    <div class="flex justify-between items-center px-4 py-3">
-                        <div class="flex flex-1 items-center space-x-4">
-                            <span class="block font-semibold">Generate Image</span>
-                        </div>
-                    </div>
-
-                    <div class="py-3 px-4 space-y-3">
-                        <form id="generate-image-form">
-                            <label for="prompt" class="block text-gray-700 text-sm font-bold mb-2">Enter your prompt:</label>
-                            <input type="text" id="prompt" name="prompt" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3">Generate Image</button>
-                        </form>
-                        <div id="result" class="mt-4"></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="lg:w-5/12">
-                <div class="bg-white shadow-md rounded-md overflow-hidden">
-                    <div class="bg-gray-50 border-b border-gray-100 flex items-baseline justify-between py-4 px-6">
-                        <h2 class="font-semibold text-lg">Generated Images</h2>
-                    </div>
-                    <div class="divide-gray-300 divide-gray-50 divide-opacity-50 divide-y px-4">
-                        <!-- Dynamically loaded generated images will appear here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="{% static 'assets/js/tippy.all.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'assets/js/uikit.js' %}"></script>
-    <script src="{% static 'assets/js/simplebar.js' %}"></script>
-    <script src="{% static 'assets/js/custom.js' %}"></script>
-    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
-
-    <script>
-        document.getElementById('generate-image-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var prompt = document.getElementById('prompt').value;
-            fetch('/generate/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ prompt: prompt })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Image generated successfully') {
-                    document.getElementById('result').innerHTML = `<p>${data.message}</p>`;
-                } else {
-                    document.getElementById('result').innerHTML = `<p>Error: ${data.error}</p>`;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
-</body>
-
-</html>
+        <button type="submit" class="btn btn-primary">Generate</button>
+    </form>
+</div>
+{% endblock %}

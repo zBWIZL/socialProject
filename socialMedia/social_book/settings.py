@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from decouple import config, Csv
+# from decouple import config, Csv
 
 load_dotenv()
 
